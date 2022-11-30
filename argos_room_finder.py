@@ -1,5 +1,3 @@
-#!/usr/local/bin/py
-
 from argos_schedule import *
 import argos_rooms as rooms
 from argos_issue import Issue

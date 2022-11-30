@@ -1,4 +1,3 @@
-#!/usr/local/bin/python3
 class Issue:
 	def __init__(self, msg, section):
 		self.msg = msg

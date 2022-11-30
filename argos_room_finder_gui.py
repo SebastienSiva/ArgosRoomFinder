@@ -1,4 +1,3 @@
-#!/usr/local/bin/py
 import os, errno, sys, ast, json, webbrowser, shutil, subprocess, traceback
 from datetime import datetime
 from collections import OrderedDict

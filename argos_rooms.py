@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import sys, os
 from openpyxl import load_workbook
 

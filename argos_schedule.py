@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import math, sys, os, re, locale, csv, time, shutil
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import PatternFill

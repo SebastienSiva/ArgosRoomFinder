@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 class TimeSlot:
 	def __init__(self, ptrm, days, start, end, room, isLab):
 		self.room = room
