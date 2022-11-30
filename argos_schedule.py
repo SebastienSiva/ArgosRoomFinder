@@ -34,10 +34,6 @@ class Section:
 			self.buildTimeSlots()
 		return self._time_slots
 		
-	def isCrossListedWith(self, other):
-		return (self.getValue('XLST_CODE') and 
-			self.getValue('XLST_CODE') == other.getValue('XLST_CODE'))
-
 	def getRoomValues(self, index):
 		index += 1
 		x = '' if index == 1 else str(index - 1)
@@ -70,16 +66,12 @@ class Section:
 			
 			self._time_slots.append(TimeSlot(ptrm, day_str, beg, end, room, i==1))
 		
-	def numRoomsNeeded(self):
-		s = self.getValue("SCHD_TYPE")
+	def numRoomsNeeded(self, zero_room_ins_meth_list):
 		i = self.getValue("INS_METH")
-		if i in ('E', '55', '81'): return 0
+		if i in zero_room_ins_meth_list: return 0
 		elif self.time_slots[1].hasRoomTimePart(): return 2
 		else: return 1
 
-	def getCredits(self):
-		return self.getValue('CHR') or self.getValue('CHR_LOW')
-		
 	def isVisible(self):
 		return self.getValue("WEB_VIEW") == 'Y'
 
