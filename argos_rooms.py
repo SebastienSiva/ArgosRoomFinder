@@ -13,9 +13,8 @@ class Room:
 
 all_rooms = None
 
-def readRoomFile(ref_dir):
+def readRoomFile(room_file):
 	global all_rooms
-	room_file = os.path.join(ref_dir, 'Rooms.xlsx')
 	all_rooms = {}
 	sheet = load_workbook(room_file).worksheets[0]
 	header_row = [c.value for c in sheet[1]]

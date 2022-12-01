@@ -48,7 +48,7 @@ class ArgosRoomFindGUI:
 		# BRAND NEW JSON FILE
 		self.json = {
 			'DataFolder': self.default_data_dir,
-			'ReferenceFolder': os.path.join(os.path.dirname(__file__), 'Reference_Files'),
+			'RoomsXLFile': None,
 			'Argos_URL':'https://argos.ggc.edu',
 			'Argos_FILE_BASE_NAME':'Course Schedule Dashboard 2.0 - Dashboard - CrseSch_MC_CourseSchedule',
 			'Banner_URL':'https://ggc.gabest.usg.edu/applicationNavigator/seamless',
@@ -76,8 +76,7 @@ class ArgosRoomFindGUI:
 		self.std_links = OrderedDict()
 		self.std_links['-URL Argos-'] = ['Argos', self.json['Argos_URL']]
 		self.std_links['-URL Banner-'] = ['Banner Tools', self.json['Banner_URL']]
-		self.std_links['-FILE Rooms-'] = ['Rooms.xlsx', 
-			os.path.join(self.json['ReferenceFolder'], 'Rooms.xlsx')]
+		self.std_links['-FILE Rooms-'] = ['Rooms.xlsx', self.json['RoomsXLFile']]
 
 	def create_link_text_boxes(self, links):
 		layout = []
@@ -88,6 +87,40 @@ class ArgosRoomFindGUI:
 	def update_link_text_boxes(self, links):
 		for k, v in links.items():
 			self.main_window[k].update(v[0], visible=(v[1]!=None))
+
+#####################GET ROOM XL#######################
+	def _get_roomxl_file(self, init_path):
+		window = self.create_window(
+			'Rooms.xlsx File Required',
+			[
+				[
+					sg.In(init_path, size=(50, 1), key='-roomxl_file-'),			
+					sg.FileBrowse(initial_folder = init_path, 
+						file_types=(("Excel File", "*.xlsx"),))
+				],
+				[sg.Push(), sg.Button('Ok')]
+			]
+		)
+		while True:
+			event, values = window.read()
+			if event == sg.WIN_CLOSED:
+				return False
+			elif event == 'Ok':
+				if os.path.isfile(values['-roomxl_file-']):
+					self.json['RoomsXLFile'] = values['-roomxl_file-']
+					self.update_json()
+					window.close()
+					return True
+				else:
+					self.error_popup('That is not a valid file...')
+			elif event == 'Cancel':
+				window.close()
+				return False
+
+	def get_roomxl_file(self):
+		init_path = self.json['RoomsXLFile'] or os.path.expanduser('~')
+		#keep popping up until file selected.
+		while not self._get_roomxl_file(init_path): continue 
 
 #####################Semesters#######################
 	def add_new_semester(self):
@@ -277,7 +310,7 @@ class ArgosRoomFindGUI:
 			self.main_window['-argos_room_opt_col-'].update(False)
 
 	def process_argos_file(self, file):
-		rooms.readRoomFile(self.json['ReferenceFolder'])
+		rooms.readRoomFile(self.json['RoomsXLFile'])
 	
 		sem_json = self.current_sem_json()
 		file_mod_time = datetime.fromtimestamp(os.path.getmtime(file))
@@ -299,19 +332,10 @@ class ArgosRoomFindGUI:
 		
 #####################Settings#######################
 	def create_stg_tab(self):
-		#NOTE: No easy way to display files in windows folder browser.
 		layout = [
-			[sg.Frame('Data Folder', [[
-				sg.In(self.json['DataFolder'], size=(50, 1), key='-stg_data_folder-'), 
-				sg.FolderBrowse(initial_folder = os.path.expanduser('~')),
-				sg.Button('Revert', key='-Data_Folder_Revert-'),
-				sg.Push(), sg.Button('Apply', key='-Data_Folder_Apply-')
-			]])],
-			[sg.Frame('Reference_Files Folder', [[ 
-				sg.In(self.json['ReferenceFolder'], size=(50, 1), key='-stg_ref_folder-'), 
-				sg.FolderBrowse(initial_folder = os.path.expanduser('~')),
-				sg.Button('Revert', key='-Ref_Folder_Revert-'),
-				sg.Push(), sg.Button('Apply', key='-Ref_Folder_Apply-')
+			[sg.Frame('Rooms.xlsx File', [[ 
+				sg.In(self.json['RoomsXLFile'], size=(50, 1), disabled=True, key='-RoomsXLFile-'), 
+				sg.Button('Modify Rooms XL Path')
 			]])],
 			[sg.Frame('Zero Rooms Needed INS_METH List', [[
 				sg.Multiline(repr(self.json['zero_room_ins_meth_list']), size=(60, 3), key='-Ins_Meth_List-'),
@@ -329,33 +353,22 @@ class ArgosRoomFindGUI:
 					tab['IGNORED_ISSUES'] = {}
 			self.update_json()
 			return
+			
+		if event == 'Modify Rooms XL Path':
+			self.get_roomxl_file()
+			self.main_window['-RoomsXLFile-'].update(self.json['RoomsXLFile'])			
+			return
 
-		#Apply or Revert 1 of the settings
-		if event.startswith('-Data'):
-			gui_key = '-stg_data_folder-'
-			json_key = 'DataFolder'
-		elif event.startswith('-Ref'):
-			gui_key = '-stg_ref_folder-'
-			json_key = 'ReferenceFolder'
-		elif event.startswith('-Ins_Meth'):
-			gui_key = '-Ins_Meth_List-'
-			json_key = 'zero_room_ins_meth_list'
-		
+		#Apply or Revert INS_METH List
+		gui_key = '-Ins_Meth_List-'
+		json_key = 'zero_room_ins_meth_list'
 		if 'Apply' in event:
-			if 'Folder' in event:
-				if os.path.isdir(values[gui_key]):
-					self.json[json_key] = values[gui_key]
-					self.update_json()
-					self.init_links()					
-				else:
-					self.error_popup('That is not a valid folder...')
-			elif 'Ins_Meth' in event:
-				try:
-					self.json[json_key] = ast.literal_eval(values[gui_key])
-					self.update_json()
-				except:
-					self.error_popup('That is not valid syntax for a list...')
-
+			try:
+				self.json[json_key] = ast.literal_eval(values[gui_key])
+				self.update_json()
+				return
+			except:
+				self.error_popup('That is not valid syntax for a list...')
 		elif 'Revert' in event:
 			self.main_window[gui_key].update(self.json[json_key])
 
@@ -426,6 +439,8 @@ class ArgosRoomFindGUI:
 		self.font = ('Any', 12)
 	
 		try:
+			if self.json['RoomsXLFile'] == None:
+				self.get_roomxl_file()
 			self.main_window = sgui.create_window('Argos Room Finder',
 				[
 					[sgui.create_semester_frame()],
