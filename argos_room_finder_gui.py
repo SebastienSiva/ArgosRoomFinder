@@ -112,7 +112,7 @@ class ArgosRoomFindGUI:
 					window.close()
 					return True
 				else:
-					self.error_popup('That is not a valid file...')
+					self.error_popup('That is not a valid Excel file...')
 			elif event == 'Cancel':
 				window.close()
 				return False
