@@ -16,12 +16,14 @@ all_rooms = None
 def readRoomFile(room_file):
 	global all_rooms
 	all_rooms = {}
-	sheet = load_workbook(room_file).worksheets[0]
+	wb = load_workbook(room_file, read_only=True)
+	sheet = wb.worksheets[0]
 	header_row = [c.value for c in sheet[1]]
 	for row in sheet.iter_rows(min_row=2, values_only=True):
 		drow = dict(zip(header_row, row))
 		room_name = drow['ROOM']
 		all_rooms[room_name] = Room(drow)
+	wb.close()
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
