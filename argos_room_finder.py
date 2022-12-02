@@ -58,7 +58,8 @@ def validate_schedule(sched, zero_room_ins_meth_list = ['E', '55', '81']):
 			slot = sec.time_slots[i]
 
 			if slot.room and slot.room not in rooms.all_rooms:
-				issues.append(Issue(f"Room '{slot.room}' unknown, marking None.", sec))
+				issues.append(Issue(f"Room '{slot.room}' unknown, leaving blank." + 
+					"\nConsider adding it to Rooms.xlsx", sec))
 				slot.room = None
 			
 			msg = None
@@ -74,6 +75,7 @@ def validate_schedule(sched, zero_room_ins_meth_list = ['E', '55', '81']):
 				msg = 'Room %s required for %ssection coded SCHD_TYPE/INS_METH: %s/%s:' % (
 					(i+1), '' if sec.isVisible() else 'HIDDEN ', 
 					sec.getValue("SCHD_TYPE"), sec.getValue("INS_METH"))
+				msg += '\nTIMESLOT: %s %s-%s (ptrm %s)' % (slot.days, slot.start, slot.end, slot.ptrm)
 
 			if msg:
 				issue = Issue(msg, sec)

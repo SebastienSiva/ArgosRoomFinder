@@ -120,7 +120,8 @@ class ArgosRoomFindGUI:
 	def get_roomxl_file(self):
 		init_path = self.json['RoomsXLFile'] or os.path.expanduser('~')
 		#keep popping up until file selected.
-		while not self._get_roomxl_file(init_path): continue 
+		while not self._get_roomxl_file(init_path): continue
+		self.std_links['-FILE Rooms-'] = ['Rooms.xlsx', self.json['RoomsXLFile']]
 
 #####################Semesters#######################
 	def add_new_semester(self):
@@ -310,7 +311,7 @@ class ArgosRoomFindGUI:
 			self.main_window['-argos_room_opt_col-'].update(False)
 
 	def process_argos_file(self, file):
-		rooms.readRoomFile(self.json['RoomsXLFile'])
+		rooms.readRoomFile(self.json['RoomsXLFile'], tmp_folder=self.default_data_dir)
 	
 		sem_json = self.current_sem_json()
 		file_mod_time = datetime.fromtimestamp(os.path.getmtime(file))
@@ -335,7 +336,7 @@ class ArgosRoomFindGUI:
 		layout = [
 			[sg.Frame('Rooms.xlsx File', [[ 
 				sg.In(self.json['RoomsXLFile'], size=(50, 1), disabled=True, key='-RoomsXLFile-'), 
-				sg.Button('Modify Rooms XL Path')
+				sg.Button('Choose New Rooms.xlsx File', key='-NewRoomsXLFile-')
 			]])],
 			[sg.Frame('Zero Rooms Needed INS_METH List', [[
 				sg.Multiline(repr(self.json['zero_room_ins_meth_list']), size=(60, 3), key='-Ins_Meth_List-'),
@@ -349,12 +350,11 @@ class ArgosRoomFindGUI:
 	def prcoess_stg_tab(self, event, values):
 		if event == 'Reset All Ignores':
 			for sem in self.json['Semesters'].values():
-				for tab in sem.values():
-					tab['IGNORED_ISSUES'] = {}
+				sem['IGNORED_ISSUES'] = {}
 			self.update_json()
 			return
 			
-		if event == 'Modify Rooms XL Path':
+		if event == '-NewRoomsXLFile-':
 			self.get_roomxl_file()
 			self.main_window['-RoomsXLFile-'].update(self.json['RoomsXLFile'])			
 			return
