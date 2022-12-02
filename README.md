@@ -9,6 +9,8 @@ _Note:_ You will need to click through many warnings to install this as it is no
 ## How to build the exe on Windows.
 https://pypi.org/project/pysimplegui-exemaker/
 
+py -m pysimplegui-exemaker.pysimplegui-exemaker
+
 Point to the file 'argos\_room\_finder\_gui.py'
 
 ## How to run on command line
