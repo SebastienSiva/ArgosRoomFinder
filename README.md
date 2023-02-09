@@ -6,7 +6,7 @@ Go to the WindowsBin folder and download the .exe file. Put the .exe file in a p
 
 _Note:_ You will need to click through many warnings to install this as it is not signed or published by any official organization.
 
-## How to build the exe on Windows.
+## How to build the exe on Windows (you need to be on a Windows PC to build).
 https://pypi.org/project/pysimplegui-exemaker/
 
 py -m pysimplegui-exemaker.pysimplegui-exemaker
