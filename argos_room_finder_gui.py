@@ -180,8 +180,6 @@ class ArgosRoomFindGUI:
 				self.issue_table.reset()
 				self.update_argos_tab()
 			
-			self.update_merge_tab()
-			
 #####################ARGOS TAB#######################
 	def create_argos_tab(self):
 		file_button_layout = [
