@@ -232,7 +232,7 @@ class ArgosRoomFindGUI:
 
 		return sg.Tab('Argos File', layout, key='-argos_tab-')	
 
-	def prcoess_argos_tab_event(self, event, values):
+	def process_argos_tab_event(self, event, values):
 		if event == '-argos_file-':
 			file = values['-argos_file-']
 			if not os.path.isfile(file) or self.get_file_ext(file) != 'CSV':
@@ -464,7 +464,7 @@ class ArgosRoomFindGUI:
 				elif event.startswith('-FILE'):
 					self.open_file_with_app(self.std_links[event][1])
 				elif values['-tab-'] == '-argos_tab-':
-					self.prcoess_argos_tab_event(event, values)
+					self.process_argos_tab_event(event, values)
 				elif values['-tab-'] == '-stg_tab-': 
 					self.prcoess_stg_tab(event, values)
 			
