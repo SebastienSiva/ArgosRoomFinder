@@ -238,7 +238,7 @@ class ArgosRoomFindGUI:
 			if not os.path.isfile(file) or self.get_file_ext(file) != 'CSV':
 				self.error_popup('That is not a valid csv file...')
 			else:
-				self.process_file(tab, file)
+				self.process_argos_file(tab, file)
 		
 		elif event == '-argos_refresh-':
 			file = self.find_latest_csv(self.json['Argos_FILE_BASE_NAME'])
