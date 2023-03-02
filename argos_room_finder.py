@@ -83,7 +83,7 @@ def validate_schedule(sched, zero_room_ins_meth_list = ['E', '55', '81']):
 				for r in getFreeRooms(sched, slot, sec.getValue('SUBJECT'), sec.getValue('COURSE')):
 					issue.sec_room_options.append(r)
 	
-	return issues	
+	return issues
 
 ###################################MAIN#########################################
 if __name__ == "__main__":
