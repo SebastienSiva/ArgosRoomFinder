@@ -2,13 +2,19 @@ class TimeSlot:
 	def __init__(self, ptrm, days, start, end, room, isLab):
 		self.room = room
 		self.ptrm = int(ptrm)
-		self.days = days
+		self.days = days # empty string if no days.
 		self.start = int(start) if start.isdigit() else None
 		self.end = int(end) if end.isdigit() else None
 		self.isLab = isLab
 
 	def hasRoomTimePart(self):
-		return self.room or self.days or self.start or self.end
+		return self.room or self.hasTimePart()
+	
+	def hasTimePart(self):
+		return (self.days and self.days != '') or self.start or self.end
+
+	def missingTimePart(self):
+		return ((not self.days) or self.days == '') or (not self.start) or (not self.end)
 
 	def __overlap_ptrms(self, other_ptrm):
 		# 1 is full semester, all other values represent mutually exclusive dates

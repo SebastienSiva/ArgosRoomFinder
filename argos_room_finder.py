@@ -45,6 +45,10 @@ def validate_schedule(sched, zero_room_ins_meth_list = ['E', '55', '81']):
 	crosslist_codes = set()
 	for sec in sched.sections.values():
 		for ts in sec.time_slots:
+			if ts.hasTimePart() and ts.missingTimePart():
+				raise Exception("\nINCOMPLETE DAYS/TIME IN " + 
+					('LAB' if ts.isLab else '') + f" TIMESLOT.\nSECTION: {sec}")
+		
 			section_by_timeslot[ts] = sec
 
 	# BUILD TIMESLOTS BY ROOM DICTIONARY
